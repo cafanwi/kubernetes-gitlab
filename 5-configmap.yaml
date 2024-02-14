@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitlab-runner-config
+  namespace: gitlab-runner
+data:
+  config.toml: |-
+    concurrent = 30
+
+    [[runners]]
+      name = "k8s-custom-runner"
+      url = "https://gitlab.com/"
+      token = "ZiAEtdpjHzpRoGY5JUhA"  
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "gitlab-runner"
+        poll_timeout = 600
+        cpu_request = "1"
+        cpu_limit = "2" 
+        memory_request = "256Mi"  
+        memory_limit = "512Mi"  
+        service_cpu_request = "200m"
+        service_cpu_limit = "400m"  
+        tags = ["k8s-custom-runner"] 
+        image = "ubuntu:latest"
+        helper-image = "alpine:latest"
+        helper_cpu_limit = "2500m"
+        helper_cpu_request = "41m"
+        helper_memory_limit = "800Mi"
+        helper_memory_request = "74Mi"
+
+
