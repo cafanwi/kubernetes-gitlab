@@ -1,0 +1,27 @@
+stages:
+  - deploy
+
+zowe_job:
+  stage: deploy
+  image:
+    name: cafanwii/zowecli:v1
+    entrypoint: [""]
+  script:
+    - zowe zosmf check status --host ZOSMF_HOST --user ZOSMF_USER --pass ZOSMF_PASSWORD
+    - zowe zosmf issue start service(FTP) --host ZOSMF_HOST --user ZOSMF_USER --pass ZOSMF_PASSWORD
+    - zowe data-set upload README.md "MAINFRAME.DATASET.NAME" --rfj   # --rfj is an optional flag to print the response in a structured JSON format.
+    - zowe jobs list jobs
+    - zowe jobs list jobs owner IBMUSER
+
+    # How can Zowe work with TSO commands ?
+    - zowe profiles create tso ukzowe4 -a ACCT#.
+    - zowe tso issue command "oget '/u/directory/file/txt' 'USER.PDSNAME(MEMBER)'
+
+
+# zowecli to interact and script against z/OSMF REST APIs from the developer laptop
+# Zowe Explorer to Graphically navigate and interact with MVS, USS, JES in Vs Code
+# IBM Z Open Editor to edit COBOL, PL/I, HLASM applications in VS Code Language Server Protocol
+# Extending Zowe Explorer to support other protocols than z/OSMF such as FTP or
+
+# NOTE: FTP or zosmf have same functionality, moving files
+

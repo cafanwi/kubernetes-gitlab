@@ -1,0 +1,10 @@
+deploy_to_kubernetes:
+  stage: deploy
+  image: cafanwi/kubectl:1.0.0
+  pull_policy: if-not-present
+  only:
+    - main
+  script:
+    - echo "$KUBECONFIG" > kubeconfig.yaml
+    - kubectl apply -f deployment.yaml
+    - kubectl apply -f service.yaml

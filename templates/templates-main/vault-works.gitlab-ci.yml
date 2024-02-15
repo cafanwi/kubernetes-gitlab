@@ -1,0 +1,19 @@
+stages:
+  - retrieve-secret
+
+variables:
+  VAULT_ADDR: https://vault-cluster-public-vault-671c701d.354bc1e5.z1.hashicorp.cloud:8200
+  VAULT_TOKEN: ${VAULT_TOKEN}
+
+retrieve-secret:
+  stage: retrieve-secret
+  image: cafanwii/vault:1.0.0
+  script: 
+    - >
+      vault login $VAULT_TOKEN
+      export SECRET_PATH="cafanwii/aws"
+      export SECRET_KEY="AWS_RUNNER_KEY"
+      export SECRET_VALUE=$(vault kv get -field=data $SECRET_PATH | jq -r .data.${SECRET_KEY})
+      echo "Secret Value: $SECRET_VALUE" >> build.env
+  only:
+    - main

@@ -1,0 +1,35 @@
+stages:
+  - pull_secret
+  - deploy
+
+pull_secret:
+  stage: pull_secret
+  image: hashicorp-vault:latest
+  script:
+    - vault --version
+    - export VAULT_NAMESPACE=cafanwii
+
+    # TEST ENVIRONMENT
+    - export VAULT_TLS_SERVER_NAME=hashocorp-macaz-vault.com
+    - export VAULT_ADDR=https://hashocorp-macaz-vault.com
+
+    - export VAULT_TOKEN="$(vault write -field=token auth/gitlab/login role=gitlab-52182 jwt=$CI_JOB_JWT)"
+    - export SUPER_SECRET="$(vault kv get -field=password secret/uat/mainframe/hdpgit1)"
+    - echo "SUPER_SECRET=$SUPER_SECRET" >> build.env
+  artifacts:
+    reports:
+      dotenv: build.env
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  
+  script:
+    - echo "$SUPER_SECRET"
+  needs: 
+    job: pull_secret
+    artifact: true
+  only:
+    - main

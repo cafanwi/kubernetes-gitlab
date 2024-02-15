@@ -1,0 +1,83 @@
+image:
+  name: gradle:latest
+  entrypoint: [""]
+  
+variables: &global_variables
+  ARTIFACTORY_API_TOKEN: "${ARTIFACTORY_API_TOKEN}"
+  ARTIFACTORY_USER: "${ARTIFACTORY_USER}" 
+  ARTIFACTORY_REPO_NAME: "hulk-unspecified"
+  APP_BUILD_VERSION: "0.version.unspecified"
+  TASKS: "build"
+  GIT_DEPTH: 0
+  EXCLUDE_TASK: ""
+  DEBUG: ""
+
+.gradle-build:
+  variables:
+    <<: *global_variables
+
+  script:
+    - >
+      ARTIFACTORY_API_TOKEN=${ARTIFACTORY_API_TOKEN};
+      ARTIFACTORY_USER=${ARTIFACTORY_USER};  
+      echo GRADLE_TASKS: ${TASKS};
+    - >
+      if [ "${EXCLUDE_TASK}" != "" ]; then
+        EX_TASK="--exclude-task ${EXCLUDE_TASK}"
+      fi
+    - >
+      cd $CI_PROJECT_DIR  
+    - >
+      DEBUG_PARAM='';
+      if [ "${DEBUG}" != "" ]; then
+        DEBUG_PARAM="--debug"
+      fi
+    - >
+      gradle -b build.gradle -Pversion=${APP_BUILD_VERSION} ${TASKS} ${EX_TASK}
+      
+
+## ORIGINAL
+# image:
+#   name: gradle:jdk8-jammy
+#   entrypoint: [""]
+# variables: &global_variables
+# #   http_proxy: "http://wkwkkkwk:3232"
+# #   https_proxy: "http://wkwkkkwk:3232"
+# #   NO_PROXY: "localhost,.cafanwii.com,127.0.0.1"
+#   ARTIFACTORY_API_TOKEN: ""
+#   ARTIFACTORY_REPO_NAME: "hulk-unspecified"
+#   APP_BUILD_VERSION: "0.version.unspecified"
+#   TASKS: "build"
+#   GIT_DEPTH: 0
+#   EXCLUDE_TASK: ""
+#   DEBUG: ""
+
+# .gradle-build:
+#   variables:
+#     <<: *global_variables
+
+#   script:
+#     - >-
+#       ARTIFACTORY_API_TOKEN=${ARTIFACTORY_API_TOKEN};
+#       ARTIFACTORY_USER=${ARTIFACTORY_USER};
+#       echo GRADLE_TASKS: ${TASKS};
+#     - >-
+#       if [ "${EXCLUDE_TASK}" != "" ]; then
+#         EX_TASK='--exclude-task ${EXCLUDE_TASK}'
+#       fi
+#     - >-
+#       DEBUG_PARAM='';
+#       if [ "${DEBUG}" != "" ]; then
+#         DEBUG_PARAM="--debug"
+#       fi
+#     - >-
+#       gradle -b .build.gradle
+#     #   -Pversion=${APP_BUILD_VERSION}
+#     #   -Dhttps.proxyHost=http://wkwkkkwk
+#     #   -Dhttps.proxyPort=3232
+#     #   -Dhttp.proxyHost=http://wkwkkkwk
+#     #   -Dhttp.proxyPort=3232
+#     #   -Dhttpsnon.proxyHost=*.cafanwii.com ${DEBUG_PARAM}
+#       ${TASKS} ${EX_TASK}
+
+

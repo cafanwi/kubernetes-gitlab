@@ -1,0 +1,20 @@
+stages:
+  - deploy
+
+deploy_to_server:
+  stage: deploy
+  image: cafanwii/networking:1.0.0
+  script:
+## Choose from any one of the following example that suite your usecase ##
+
+    # This is a simple ssh into the server
+    - sshpass -p $SUPER_SECRET ssh -vvv cafanwii@10.0.0.11 -x 'pwd'
+
+    # this is adding scp, using a sample README.md as a test trasfer
+    - sshpass -p $SUPER_SECRET scp -vvv README.md cafanwii@10.0.0.11:/user/cafanwii/myserverdir
+
+    # sftp, transfer app.jar to myserver path /user/cafanwii/myserverdir
+    - echo "put /cafanwii-app/java/app.jar" | sshpass -p $SUPER_SECRET sftp cafanwii@10.0.0.11:/user/cafanwii/myserverdir
+
+  only:
+    - main

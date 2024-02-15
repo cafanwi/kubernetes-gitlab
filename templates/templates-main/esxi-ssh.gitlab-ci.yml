@@ -1,0 +1,11 @@
+stages:
+  - test
+
+test_ssh_runner:
+  stage: test
+  script:
+    - echo "$SERVER_TEN_PRIVATE_KEY" > id_rsa  
+    - chmod 600 id_rsa 
+    - ssh -i id_rsa -o StrictHostKeyChecking=no cafanwii@10.0.0.10 "echo 'Hello from GitLab Runner' > ~/test.sh"
+  tags:
+    - ssh-z-runner
